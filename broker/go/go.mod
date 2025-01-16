@@ -1,4 +1,4 @@
-module monitor-server
+module monitor-broker
 
 go 1.22.6
 

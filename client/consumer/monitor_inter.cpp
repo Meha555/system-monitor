@@ -71,6 +71,7 @@ void MonitorInter::start()
         monitor::proto::MonitorInfo monitor_info;
         while (!m_stop) {
             monitor_info.Clear();
+            // TODO 这里要改成服务器主动推送
             m_rpc_client->GetMonitorInfo(&monitor_info);
             // qWarning() << "====" << QString::fromStdString(monitor_info.DebugString());
             emit dataUpdated(monitor_info);

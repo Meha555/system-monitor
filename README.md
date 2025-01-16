@@ -31,11 +31,11 @@ Linux性能监控系统，支持分布式部署。
 
 1、部署数据采集服务：monitord
 
-执行由client/collector构建来的monitord即可。
+执行由client/publisher构建来的monitord即可。
 
-2、部署数据发布服务：monitor-server
+2、部署数据转发服务：monitor-broker
 
-执行由server/cpp或server/go构建来的monitor-server即可。
+执行由broker/cpp或broker/go构建来的monitor-broker即可。
 
 3、如果需要使用docker：
 

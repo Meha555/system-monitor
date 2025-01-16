@@ -4,4 +4,4 @@ Description=monitor sysinfo
 [Service]
 Slice=session.slice
 Type=notify
-ExecStart=/usr/bin/monitor-server -a %i
+ExecStart=/usr/bin/monitor-broker -a %i

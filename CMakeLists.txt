@@ -14,6 +14,5 @@ find_package(PkgConfig)
 
 add_subdirectory(proto)
 add_subdirectory(grpc)
-add_subdirectory(server/cpp)
-add_subdirectory(client/collector)
-add_subdirectory(client/frontend)
+add_subdirectory(client)
+add_subdirectory(broker/cpp)
