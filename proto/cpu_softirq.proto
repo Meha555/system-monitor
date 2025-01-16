@@ -1,0 +1,18 @@
+syntax = "proto3";
+package monitor.proto;
+option go_package = ".;proto";
+
+//Message type for Soft Interrupt statistics.
+message SoftIrq {
+    string cpu = 1; // CPU identifier
+    float hi_avg = 2; // High-priority tasklet softirq
+    float timer_avg = 3; // Timer softirq
+    float net_tx_avg = 4; // Network transmission softirq
+    float net_rx_avg = 5; // Network reception softirq
+    float block_avg = 6; // Block device softirq
+    float irq_poll_avg = 7; // IRQ poll softirq
+    float tasklet_avg = 8; // Tasklet softirq
+    float sched_avg = 9; // Scheduler softirq
+    float hrtimer_avg = 10; // High-resolution timer softirq
+    float rcu_avg = 11; //RCU (Read-Copy-Update) softirq
+}

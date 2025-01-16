@@ -1,0 +1,14 @@
+syntax = "proto3";
+package monitor.proto;
+option go_package = ".;proto";
+
+import "google/protobuf/empty.proto";
+import "monitor_info.proto";
+
+// Grpc Service
+service MonitorService {
+    // no return
+    rpc SetMonitorInfo(MonitorInfo) returns (google.protobuf.Empty) {}
+    // no parameters
+    rpc GetMonitorInfo(google.protobuf.Empty) returns (MonitorInfo) {}
+}
