@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Monitor UI
+Name[zh_CN]=系统监视器UI前端
+GenericName=Monitor UI
+GenericName[zh_CN]=系统监视器UI前端
+Exec=/usr/bin/monitor-ui
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Categories=System;
