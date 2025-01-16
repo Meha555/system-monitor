@@ -1,6 +1,6 @@
 # System Monitor
 
-Linux环境下的Linux性能分析监控系统，支持分布式部署。
+Linux性能监控系统，支持分布式部署。
 
 ## 功能
 
