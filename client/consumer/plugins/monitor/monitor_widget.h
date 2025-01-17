@@ -1,8 +1,8 @@
 #ifndef MONITORWIDGET_H
 #define MONITORWIDGET_H
 
-#include "monitor_info.pb.h"
 #include <QWidget>
+#include "monitor_info.pb.h"
 
 namespace widgets
 {
@@ -15,11 +15,7 @@ public:
     virtual ~MonitorWidget() = default;
 
     virtual void init() = 0;
-    virtual QString name() const = 0;
-    virtual void updateInfo(const monitor::proto::MonitorInfo &monitor_info) = 0;
-
-signals:
-    void inited();
+    virtual void updateInfo(const monitor::proto::MonitorInfo &monitor_info);
 };
 
 }

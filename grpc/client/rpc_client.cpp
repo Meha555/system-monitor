@@ -18,8 +18,7 @@ bool RpcClient::SetMonitorInfo(const monitor::proto::MonitorInfo &monito_info)
         LOG(INFO) << "SetMonitorInfo: " << monito_info.ShortDebugString();
         return true;
     } else {
-        LOG(ERROR) << "status.error_details: " << status.error_details();
-        LOG(ERROR) << "status.error_message: " << status.error_message();
+        LOG(ERROR) << "SetMonitorInfo failed. " << status.error_message() << " (" << status.error_details() << ")";
         return false;
     }
 }
@@ -33,8 +32,7 @@ bool RpcClient::GetMonitorInfo(monitor::proto::MonitorInfo *monito_info)
         LOG(INFO) << "GetMonitorInfo: " << monito_info->ShortDebugString();
         return true;
     } else {
-        LOG(ERROR) << "status.error_details: " << status.error_details();
-        LOG(ERROR) << "status.error_message: " << status.error_message();
+        LOG(ERROR) << "GetMonitorInfo failed. " << status.error_message() << " (" << status.error_details() << ")";
         return false;
     }
 }

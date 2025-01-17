@@ -26,6 +26,8 @@ static void daemonize()
     }
 }
 
+static std::unique_ptr<grpc::Server> g_server;
+
 static void start_server(const std::string &ip, const std::string &port)
 {
     grpc::ServerBuilder builder;
@@ -34,13 +36,23 @@ static void start_server(const std::string &ip, const std::string &port)
     monitor::MonitorServiceImpl grpc_server;
     builder.RegisterService(&grpc_server);
 
-    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-    server->Wait();
+    g_server = builder.BuildAndStart();
+    g_server->Wait();
+}
+
+static void stop_server(int sig)
+{
+    if (g_server) {
+        g_server->Shutdown();
+        LOG(INFO) << "Server stopped";
+    }
 }
 
 int main(int argc, char *argv[])
 {
     // daemonize(); // FIXME
+    std::signal(SIGTERM, stop_server);
+    std::signal(SIGINT, stop_server);
 
     google::InitGoogleLogging(argv[0]);
     FLAGS_colorlogtostderr = false; // 关闭彩色日志
