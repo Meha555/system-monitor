@@ -4,6 +4,7 @@
 
 namespace monitor
 {
+// 数据采集者
 class MonitorInter
 {
 public:

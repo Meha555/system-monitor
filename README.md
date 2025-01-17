@@ -63,6 +63,6 @@ docker build --network host -f base.dockerfile .
 
 ## TODO
 
-- 零拷贝有用吗？
-- widget改成插件
+- 零拷贝有用吗？能否把proc映射出来？
 - 定时任务、数据上报
+- 加入心跳

@@ -18,15 +18,14 @@ void CpuMonitorWidget::init()
 {
     m_cpu_load_box->setItemDelegate(new components::HighlightDelegate(this));
     m_cpu_stat_box->setItemDelegate(new components::HighlightDelegate(this));
-    connect(this, &CpuMonitorWidget::inited, m_cpu_load_box, &components::TableBox::display);
-    connect(this, &CpuMonitorWidget::inited, m_cpu_stat_box, &components::TableBox::display);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(m_cpu_load_box, 1);
     layout->addWidget(m_cpu_stat_box, 6);
     setLayout(layout);
 
-    emit inited();
+    m_cpu_load_box->display();
+    m_cpu_stat_box->display();
 }
 
 void CpuMonitorWidget::updateInfo(const monitor::proto::MonitorInfo &monitor_info)

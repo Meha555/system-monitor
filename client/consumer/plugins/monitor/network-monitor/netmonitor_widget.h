@@ -2,7 +2,7 @@
 #define NETMONITORWIDGET_H
 
 #include "components/tablebox.h"
-#include "monitor_widget.h"
+#include "plugins/monitor/monitor_widget.h"
 
 namespace widgets
 {
@@ -14,10 +14,6 @@ public:
     explicit NetMonitorWidget(MonitorWidget *parent = nullptr);
 
     void init() override;
-    QString name() const override
-    {
-        return QStringLiteral("Network");
-    }
     void updateInfo(const monitor::proto::MonitorInfo &monitor_info) override;
 
 private:

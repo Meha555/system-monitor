@@ -15,12 +15,13 @@ NetMonitorWidget::NetMonitorWidget(MonitorWidget *parent)
 void NetMonitorWidget::init()
 {
     m_net_box->setItemDelegate(new components::HighlightDelegate(this));
-    connect(this, &NetMonitorWidget::inited, m_net_box, &components::TableBox::display);
+
     QGridLayout *layout = new QGridLayout(this);
     layout->addWidget(m_net_box);
     layout->setContentsMargins(0, 0, 0, 0);
     setLayout(layout);
-    emit inited();
+
+    m_net_box->display();
 }
 
 void NetMonitorWidget::updateInfo(const monitor::proto::MonitorInfo &monitor_info)

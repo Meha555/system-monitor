@@ -6,7 +6,8 @@ file(GLOB_RECURSE SOURCES *.cpp)
 add_executable(monitord ${SOURCES})
 
 target_include_directories(monitord PUBLIC
-  src
+  monitor
+  monitor/factory
   utils
   ${PROJECT_SOURCE_DIR}/grpc
   ${PROJECT_SOURCE_DIR}/3rd-party
