@@ -14,7 +14,7 @@ Linux性能监控系统，支持分布式部署。
 
 - 提供Linux桌面客户端，遵循freedesktop规范，可以托管给systmed，实现自动部署。
 
-
+![architecture](architecture.png)
 
 ## 详细介绍
 
@@ -57,12 +57,7 @@ docker build --network host -f base.dockerfile .
 
 执行由client/frontend构建而来的monitor-ui即可。
 
-## 项目展示
-
-
-
 ## TODO
 
-- 零拷贝有用吗？
-- widget改成插件
+- 心跳机制
 - 定时任务、数据上报
