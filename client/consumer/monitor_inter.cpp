@@ -2,11 +2,11 @@
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 
-#include "factories/cpumonitor_factory.h"
-#include "factories/memmonitor_factory.h"
-#include "factories/monitor_factory.h"
-#include "factories/netmonitor_factory.h"
-#include "factories/softirqmonitor_factory.h"
+// #include "factories/cpumonitor_factory.h"
+// #include "factories/memmonitor_factory.h"
+// #include "factories/monitor_factory.h"
+// #include "factories/netmonitor_factory.h"
+// #include "factories/softirqmonitor_factory.h"
 #include "rpc_client.h"
 
 static const QString g_config_file = QStringLiteral("monitor.conf");
@@ -63,7 +63,7 @@ bool MonitorInter::init()
 void MonitorInter::start()
 {
     Q_ASSERT(m_rpc_client);
-    createMonitors();
+    // createMonitors();
 
     emit started();
 
@@ -71,9 +71,7 @@ void MonitorInter::start()
         monitor::proto::MonitorInfo monitor_info;
         while (!m_stop) {
             monitor_info.Clear();
-            // TODO 这里要改成服务器主动推送
             m_rpc_client->GetMonitorInfo(&monitor_info);
-            // qWarning() << "====" << QString::fromStdString(monitor_info.DebugString());
             emit dataUpdated(monitor_info);
             QThread::sleep(3);
         }
@@ -87,21 +85,21 @@ void MonitorInter::stop()
     qInfo() << "Exiting with code:" << m_future.result();
 }
 
-void MonitorInter::createMonitors()
-{
-    QSharedPointer<factories::MonitorFactory> factory;
+// void MonitorInter::createMonitors()
+// {
+//     QSharedPointer<factories::MonitorFactory> factory;
 
-    factory.reset(new factories::CpuMonitorFactory());
-    emit monitorCreated(factory->createMonitorWidget());
+//     factory.reset(new factories::CpuMonitorFactory());
+//     emit monitorCreated(factory->createMonitorWidget());
 
-    factory.reset(new factories::MemMonitorFactory());
-    emit monitorCreated(factory->createMonitorWidget());
+//     factory.reset(new factories::MemMonitorFactory());
+//     emit monitorCreated(factory->createMonitorWidget());
 
-    factory.reset(new factories::NetMonitorFactory());
-    emit monitorCreated(factory->createMonitorWidget());
+//     factory.reset(new factories::NetMonitorFactory());
+//     emit monitorCreated(factory->createMonitorWidget());
 
-    factory.reset(new factories::SoftIrqMonitorFactory());
-    emit monitorCreated(factory->createMonitorWidget());
-}
+//     factory.reset(new factories::SoftIrqMonitorFactory());
+//     emit monitorCreated(factory->createMonitorWidget());
+// }
 
 }

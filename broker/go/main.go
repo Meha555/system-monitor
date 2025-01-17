@@ -2,21 +2,22 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
+	pb "monitor-broker/proto"
 	"net"
 	"sync"
-	"flag"
-	"gopkg.in/ini.v1"
+
 	"google.golang.org/grpc"
-	pb "monitor-broker/proto"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	"gopkg.in/ini.v1"
 )
 
 type Server struct {
 	pb.UnimplementedMonitorServiceServer // 继承自动生成的 Unimplemented 方法，可以确保将来不破坏接口兼容性
 
-	mu            sync.Mutex              // 添加互斥锁以保护 monitor_info
-	monitor_info *pb.MonitorInfo          // 使用指针而不是值
+	mu           sync.Mutex      // 添加互斥锁以保护 monitor_info
+	monitor_info *pb.MonitorInfo // 使用指针而不是值
 }
 
 func (s *Server) SetMonitorInfo(ctx context.Context, req *pb.MonitorInfo) (*emptypb.Empty, error) {
@@ -45,7 +46,7 @@ func main() {
 	flag.Parse()
 
 	cfg, err := ini.Load(confFile)
-	if (err != nil) {
+	if err != nil {
 		log.Fatal("Failed to load: ", confFile)
 	}
 

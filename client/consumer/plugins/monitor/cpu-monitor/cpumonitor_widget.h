@@ -2,22 +2,18 @@
 #define CPUMONITORWIDGET_H
 
 #include "components/tablebox.h"
-#include "monitor_widget.h"
+#include "plugins/monitor/monitor_widget.h"
 
 namespace widgets
 {
 
-class CpuMonitorWidget : public MonitorWidget
+class CpuMonitorWidget : public widgets::MonitorWidget
 {
     Q_OBJECT
 public:
-    explicit CpuMonitorWidget(MonitorWidget *parent = nullptr);
+    explicit CpuMonitorWidget(widgets::MonitorWidget *parent = nullptr);
 
     void init() override;
-    QString name() const override
-    {
-        return QStringLiteral("CPU");
-    }
     void updateInfo(const monitor::proto::MonitorInfo &monitor_info) override;
 
 private:
