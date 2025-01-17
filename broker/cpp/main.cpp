@@ -1,6 +1,7 @@
 #include <csignal>
 #include <fcntl.h>
 #include <string>
+#include <unistd.h>
 
 #include "inicpp/inicpp.hpp"
 #include <gflags/gflags.h>
@@ -51,7 +52,7 @@ int main(int argc, char *argv[])
     inicpp::IniManager conf(FLAGS_conf);
     const std::string ip = conf["server"]["ip"];
     const std::string port = conf["server"]["port"];
-    const google::LogSeverity log_level = conf["server"]["log_level"];
+    const google::LogSeverity log_level = static_cast<google::LogSeverity>(conf["server"]["log_level"].operator int());
     const std::string log_path = conf["server"]["log_path"];
 
     google::SetLogDestination(log_level, log_path.c_str());

@@ -42,8 +42,8 @@ Linux性能监控系统，支持分布式部署。
 构建镜像：
 
 ```bash
-cd docker/build
-docker build --network host -f base.dockerfile .
+cd docker/images
+docker build -t monitor:1.0 --network host -f monitor.dockerfile .
 ```
 
 进入docker容器：
