@@ -41,17 +41,17 @@ bool MonitorInter::init()
                           .arg(m_config_map["ip"])
                           .arg(m_config_map["port"]);
     qInfo() << "Connecting to server:" << address;
-    m_rpc_client = new RpcClient(address.toStdString());
+    m_monitorMgrClient = std::make_unique<MonitorManagementClient>(address.toStdString());
+    m_monitorClient = std::make_unique<MonitorClient>(address.toStdString());
 
     monitor::proto::MonitorInfo monitor_info;
     uint8_t count = 5;
-    while (!m_rpc_client->GetMonitorInfo(&monitor_info) && --count > 0) {
+    while (!m_monitorMgrClient->GetMonitorInfo(&monitor_info) && --count > 0) {
         qWarning() << "Get monitor info failed, retrying for last " << count << " times";
         QThread::sleep(2);
     }
     if (count <= 0) {
-        qWarning() << "Failed to get monitor info, connection passiably broken";
-        delete m_rpc_client;
+        qWarning() << "Failed to get monitor info, connection probably broken";
         return false;
     }
 
@@ -62,20 +62,26 @@ bool MonitorInter::init()
 
 void MonitorInter::start()
 {
-    Q_ASSERT(m_rpc_client);
+    Q_ASSERT(m_monitorMgrClient);
+    Q_ASSERT(m_monitorClient);
     createMonitors();
 
     emit started();
 
-    m_future = QtConcurrent::run([this]() {
-        monitor::proto::MonitorInfo monitor_info;
+    QtConcurrent::run([this]() -> int {
+        // TODO SubscribeMonitorInfo跑起来就不会主动退出，所以需要一个取消机制
+        return m_monitorClient->SubscribeMonitorInfo();
+    });
+    m_future = QtConcurrent::run([this]() -> int {
+        // monitor::proto::MonitorInfo monitor_info;
         while (!m_stop) {
-            monitor_info.Clear();
-            // TODO 这里要改成服务器主动推送
-            m_rpc_client->GetMonitorInfo(&monitor_info);
+            // monitor_info.Clear();
+            // m_monitorMgrClient->GetMonitorInfo(&monitor_info);
             // qWarning() << "====" << QString::fromStdString(monitor_info.DebugString());
+            // emit dataUpdated(monitor_info);
+            auto monitor_info = m_monitorClient->FetchMonitorInfo();
             emit dataUpdated(monitor_info);
-            QThread::sleep(3);
+            // QThread::sleep(3);
         }
         return 0;
     });

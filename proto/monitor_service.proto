@@ -5,10 +5,16 @@ option go_package = ".;proto";
 import "google/protobuf/empty.proto";
 import "monitor_info.proto";
 
-// Grpc Service
-service MonitorService {
-    // no return
+service MonitorManagementService {
+    // 客户端主动上报数据
     rpc SetMonitorInfo(MonitorInfo) returns (google.protobuf.Empty) {}
-    // no parameters
+    // 客户端主动拉取数据
     rpc GetMonitorInfo(google.protobuf.Empty) returns (MonitorInfo) {}
+}
+
+service MonitorService {
+    // 客户端订阅数据（注意这里要用服务端流式RPC，因为要一直保持长连接来接受服务端的推送）
+    rpc SubscribeMonitorInfo(google.protobuf.Empty) returns (stream MonitorInfo) {}
+    // 服务端主动发布数据
+    rpc PublishMonitorInfo(MonitorInfo) returns (google.protobuf.Empty) {}
 }

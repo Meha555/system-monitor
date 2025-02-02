@@ -40,7 +40,8 @@ private:
     std::atomic<bool> m_stop;
     QFuture<int> m_future;
 
-    RpcClient *m_rpc_client;
+    std::unique_ptr<MonitorClient> m_monitorClient;
+    std::unique_ptr<MonitorManagementClient> m_monitorMgrClient;
 };
 
 }

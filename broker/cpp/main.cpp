@@ -32,8 +32,10 @@ static void start_server(const std::string &ip, const std::string &port)
     grpc::ServerBuilder builder;
     builder.AddListeningPort(ip + ":" + port, grpc::InsecureServerCredentials());
 
-    monitor::MonitorServiceImpl grpc_server;
-    builder.RegisterService(&grpc_server);
+    monitor::MonitorManagementServiceImpl monitorMgrService;
+    monitor::MonitorServiceImpl monitorService;
+    builder.RegisterService(&monitorMgrService);
+    builder.RegisterService(&monitorService);
 
     std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
     server->Wait();

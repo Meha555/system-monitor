@@ -1,0 +1,15 @@
+syntax = "proto3";
+package monitor.proto;
+option go_package = ".;proto";
+
+message Ping {
+    bytes message = 1;
+}
+
+message Pong {
+    bytes message = 1;
+}
+
+service HeartBeatService {
+    rpc HeartBeat(Ping) returns (Pong) {}
+}
