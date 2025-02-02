@@ -5,10 +5,19 @@ option go_package = ".;proto";
 import "google/protobuf/empty.proto";
 import "monitor_info.proto";
 
+message Result {
+    bool success = 1;
+}
+
+message GetMonitorInfoResponse {
+    Result result = 1;
+    MonitorInfo monitor_info = 2;
+}
+
 // Grpc Service
 service MonitorService {
     // no return
     rpc SetMonitorInfo(MonitorInfo) returns (google.protobuf.Empty) {}
     // no parameters
-    rpc GetMonitorInfo(google.protobuf.Empty) returns (MonitorInfo) {}
+    rpc GetMonitorInfo(google.protobuf.Empty) returns (GetMonitorInfoResponse) {}
 }

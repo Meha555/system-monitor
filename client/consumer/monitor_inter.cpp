@@ -2,11 +2,6 @@
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 
-#include "factories/cpumonitor_factory.h"
-#include "factories/memmonitor_factory.h"
-#include "factories/monitor_factory.h"
-#include "factories/netmonitor_factory.h"
-#include "factories/softirqmonitor_factory.h"
 #include "rpc_client.h"
 
 static const QString g_config_file = QStringLiteral("monitor.conf");
@@ -47,7 +42,7 @@ bool MonitorInter::init()
     uint8_t count = 5;
     while (!m_rpc_client->GetMonitorInfo(&monitor_info) && --count > 0) {
         qWarning() << "Get monitor info failed, retrying for last " << count << " times";
-        QThread::sleep(2);
+        QThread::sleep(3);
     }
     if (count <= 0) {
         qWarning() << "Failed to get monitor info, connection passiably broken";
@@ -63,7 +58,6 @@ bool MonitorInter::init()
 void MonitorInter::start()
 {
     Q_ASSERT(m_rpc_client);
-    createMonitors();
 
     emit started();
 
@@ -84,24 +78,16 @@ void MonitorInter::start()
 void MonitorInter::stop()
 {
     m_stop.store(true);
+    if (m_future.isValid())
     qInfo() << "Exiting with code:" << m_future.result();
 }
 
-void MonitorInter::createMonitors()
+void MonitorInter::refresh()
 {
-    QSharedPointer<factories::MonitorFactory> factory;
-
-    factory.reset(new factories::CpuMonitorFactory());
-    emit monitorCreated(factory->createMonitorWidget());
-
-    factory.reset(new factories::MemMonitorFactory());
-    emit monitorCreated(factory->createMonitorWidget());
-
-    factory.reset(new factories::NetMonitorFactory());
-    emit monitorCreated(factory->createMonitorWidget());
-
-    factory.reset(new factories::SoftIrqMonitorFactory());
-    emit monitorCreated(factory->createMonitorWidget());
+    monitor::proto::MonitorInfo monitor_info;
+    m_rpc_client->GetMonitorInfo(&monitor_info);
+    // qWarning() << "====" << QString::fromStdString(monitor_info.DebugString());
+    emit dataUpdated(monitor_info);
 }
 
 }

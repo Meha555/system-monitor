@@ -1,8 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "monitor_inter.h"
 #include <QMainWindow>
+
+#include "monitor_inter.h"
+#include "widgets/monitor_widget.h"
 
 class QStackedLayout;
 class MainWindow : public QMainWindow
@@ -14,9 +16,13 @@ public:
 
 private:
     void buildUI();
+    void createMonitors();
 
 public slots:
     void updateData(const monitor::proto::MonitorInfo &monitor_info);
+
+signals:
+    void monitorCreated(widgets::MonitorWidget *monitors);
 
 private:
     QStackedLayout *m_stackLayout;

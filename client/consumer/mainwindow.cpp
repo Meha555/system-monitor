@@ -1,28 +1,41 @@
 #include "mainwindow.h"
+#include "factories/monitor_factory.h"
+#include "factories/cpumonitor_factory.h"
+#include "factories/memmonitor_factory.h"
+#include "factories/monitor_factory.h"
+#include "factories/netmonitor_factory.h"
+#include "factories/softirqmonitor_factory.h"
 #include "widgets/monitor_widget.h"
 #include <QDebug>
 #include <QFrame>
 #include <QPushButton>
 #include <QStackedLayout>
+#include <qlogging.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_stackLayout(new QStackedLayout())
     , m_monitorInter(new monitor::MonitorInter(this))
 {
+    connect(this, &MainWindow::monitorCreated, [this](widgets::MonitorWidget *monitor) {
+        m_monitors.append(monitor);
+    });
     connect(m_monitorInter, &monitor::MonitorInter::inited, [this](QString host_name) {
         m_host_name = host_name;
     });
-    connect(m_monitorInter, &monitor::MonitorInter::monitorCreated, [this](widgets::MonitorWidget *monitor) {
-        m_monitors.append(monitor);
-    });
-    connect(m_monitorInter, &monitor::MonitorInter::started, this, &MainWindow::buildUI);
+    // connect(m_monitorInter, &monitor::MonitorInter::started, this, &MainWindow::buildUI);
     connect(m_monitorInter, &monitor::MonitorInter::dataUpdated, this, &MainWindow::updateData);
 
-    if (!m_monitorInter->init()) {
-        qFatal("monitor init failed!");
-    }
-    m_monitorInter->start();
+    buildUI();
+
+    // 异步地启动后端监控Stub
+    QThreadPool::globalInstance()->start([this] {
+        if (!m_monitorInter->init()) {
+            qCritical("monitor init failed!");
+            exit(0);
+        }
+        m_monitorInter->start();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -45,6 +58,8 @@ void MainWindow::buildUI()
     wMain->setLayout(lMain);
     setCentralWidget(wMain);
 
+    createMonitors();
+
     for (auto &monitor : m_monitors) {
         m_stackLayout->addWidget(monitor);
         monitor->setParent(wMain);
@@ -54,8 +69,28 @@ void MainWindow::buildUI()
             m_stackLayout->setCurrentIndex(m_stackLayout->indexOf(monitor));
             monitor->show();
         });
-        lPanel->addWidget(btn);
+        lPanel->addWidget(btn, 4);
     }
+    QPushButton *btn = new QPushButton(tr("Refresh"), this);
+    connect(btn, &QPushButton::clicked, m_monitorInter, &monitor::MonitorInter::refresh);
+    lPanel->addWidget(btn, 1);
+}
+
+void MainWindow::createMonitors()
+{
+    QSharedPointer<factories::MonitorFactory> factory;
+
+    factory.reset(new factories::CpuMonitorFactory());
+    emit monitorCreated(factory->createMonitorWidget());
+
+    factory.reset(new factories::MemMonitorFactory());
+    emit monitorCreated(factory->createMonitorWidget());
+
+    factory.reset(new factories::NetMonitorFactory());
+    emit monitorCreated(factory->createMonitorWidget());
+
+    factory.reset(new factories::SoftIrqMonitorFactory());
+    emit monitorCreated(factory->createMonitorWidget());
 }
 
 void MainWindow::updateData(const monitor::proto::MonitorInfo &monitor_info)

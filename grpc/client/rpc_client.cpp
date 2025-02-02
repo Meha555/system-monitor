@@ -24,13 +24,18 @@ bool RpcClient::SetMonitorInfo(const monitor::proto::MonitorInfo &monito_info)
     }
 }
 
-bool RpcClient::GetMonitorInfo(monitor::proto::MonitorInfo *monito_info)
+bool RpcClient::GetMonitorInfo(monitor::proto::MonitorInfo *monitor_info)
 {
     ::grpc::ClientContext context;
     ::google::protobuf::Empty request;
-    ::grpc::Status status = m_stub->GetMonitorInfo(&context, request, monito_info);
+    monitor::proto::GetMonitorInfoResponse response;
+    ::grpc::Status status = m_stub->GetMonitorInfo(&context, request, &response);
     if (status.ok()) {
-        LOG(INFO) << "GetMonitorInfo: " << monito_info->ShortDebugString();
+        if (!response.result().success()) {
+            return false;
+        }
+        monitor_info->CopyFrom(response.monitor_info());
+        LOG(INFO) << "GetMonitorInfo: " << monitor_info->ShortDebugString();
         return true;
     } else {
         LOG(ERROR) << "status.error_details: " << status.error_details();

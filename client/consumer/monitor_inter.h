@@ -2,7 +2,6 @@
 
 #include "monitor_info.pb.h"
 #include "rpc_client.h"
-#include "widgets/monitor_widget.h"
 #include <QFuture>
 #include <QMap>
 #include <QSettings>
@@ -19,17 +18,14 @@ public:
 
     void readConfig();
 
-private:
-    void createMonitors();
-
 public slots:
     bool init();
     void start();
     void stop();
+    void refresh();
 
 signals:
     void inited(QString host_name);
-    void monitorCreated(widgets::MonitorWidget *monitors);
     void started();
     void dataUpdated(const monitor::proto::MonitorInfo &monitor_info);
 

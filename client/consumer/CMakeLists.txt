@@ -7,7 +7,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/misc;${CMAKE_MODULE_PATH}")
 #
 # Dependencies
 #
-find_package(Qt5 REQUIRED COMPONENTS
+find_package(Qt6 REQUIRED COMPONENTS
     Core
     Widgets
     Concurrent
@@ -29,8 +29,8 @@ target_include_directories(monitor-ui PUBLIC
 
 target_link_libraries(monitor-ui
     PUBLIC
-    Qt5::Widgets
-    Qt5::Core
+    Qt6::Widgets
+    Qt6::Core
     grpc_client
     monitor_proto
 )
