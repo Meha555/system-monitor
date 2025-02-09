@@ -26,13 +26,20 @@ func (s *Server) SetMonitorInfo(ctx context.Context, req *pb.MonitorInfo) (*empt
 	return &emptypb.Empty{}, nil
 }
 
-func (s *Server) GetMonitorInfo(ctx context.Context, req *emptypb.Empty) (*pb.MonitorInfo, error) {
+func (s *Server) GetMonitorInfo(ctx context.Context, req *emptypb.Empty) (*pb.GetMonitorInfoResponse, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.monitor_info == nil {
-		return &pb.MonitorInfo{}, nil
+		return NewGetMonitorInfoResponse(false, nil), nil
 	}
-	return s.monitor_info, nil
+	return NewGetMonitorInfoResponse(true, s.monitor_info), nil
+}
+
+func NewGetMonitorInfoResponse(success bool, monitorInfo *pb.MonitorInfo) *pb.GetMonitorInfoResponse {
+	return &pb.GetMonitorInfoResponse{
+		Result:     &pb.Result{Success: success},
+		MonitorInfo: monitorInfo,
+	}
 }
 
 var confFile string
@@ -60,6 +67,7 @@ func main() {
 		monitor_info: &pb.MonitorInfo{}, // 初始化为非 nil
 	}
 	pb.RegisterMonitorServiceServer(s, server)
+	log.Println("Server listening at TCP ", serverAddr)
 	err = s.Serve(lis)
 	if err != nil {
 		panic(err)
