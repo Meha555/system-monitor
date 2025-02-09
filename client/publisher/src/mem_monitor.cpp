@@ -16,7 +16,7 @@ void MemMonitor::UpdateOnce(monitor::proto::MonitorInfo *monitor_info)
         return;
     }
     if (!m_mem_info) {
-        m_mem_info = std::make_shared<MemInfo>();
+        m_mem_info = std::make_unique<MemInfo>();
     }
     for (const auto &mem_data : mem_datas) {
         if (mem_data[0] == "MemTotal:") {

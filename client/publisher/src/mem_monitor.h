@@ -38,7 +38,7 @@ public:
     void Stop() override;
 
 private:
-    std::shared_ptr<MemInfo> m_mem_info;
+    std::unique_ptr<MemInfo> m_mem_info;
 };
 
 } // namespace monitor

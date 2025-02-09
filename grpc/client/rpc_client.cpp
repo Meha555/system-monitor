@@ -11,9 +11,9 @@ RpcClient::RpcClient(const std::string &server_address)
 
 bool RpcClient::SetMonitorInfo(const monitor::proto::MonitorInfo &monito_info)
 {
-    ::grpc::ClientContext context;
-    ::google::protobuf::Empty response;
-    ::grpc::Status status = m_stub->SetMonitorInfo(&context, monito_info, &response);
+    grpc::ClientContext context;
+    google::protobuf::Empty response;
+    grpc::Status status = m_stub->SetMonitorInfo(&context, monito_info, &response);
     if (status.ok()) {
         LOG(INFO) << "SetMonitorInfo: " << monito_info.ShortDebugString();
         return true;
@@ -26,10 +26,10 @@ bool RpcClient::SetMonitorInfo(const monitor::proto::MonitorInfo &monito_info)
 
 bool RpcClient::GetMonitorInfo(monitor::proto::MonitorInfo *monitor_info)
 {
-    ::grpc::ClientContext context;
-    ::google::protobuf::Empty request;
+    grpc::ClientContext context;
+    google::protobuf::Empty request;
     monitor::proto::GetMonitorInfoResponse response;
-    ::grpc::Status status = m_stub->GetMonitorInfo(&context, request, &response);
+    grpc::Status status = m_stub->GetMonitorInfo(&context, request, &response);
     if (status.ok()) {
         if (!response.result().success()) {
             return false;

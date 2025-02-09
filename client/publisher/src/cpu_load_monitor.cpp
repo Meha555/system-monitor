@@ -15,7 +15,7 @@ void CpuLoadMonitor::UpdateOnce(monitor::proto::MonitorInfo *monitor_info)
         return;
     }
     if (!m_load) {
-        m_load = std::make_shared<CpuLoad>();
+        m_load = std::make_unique<CpuLoad>();
     }
     m_load->load_avg_1m = std::stof(cpu_load[0]);
     m_load->load_avg_3m = std::stof(cpu_load[1]);

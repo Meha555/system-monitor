@@ -19,12 +19,7 @@ static void daemonize()
 {
     daemon(0, 1); // daemon化
     std::signal(SIGPIPE, SIG_IGN); // daemon应该忽略SIGPIPE信号
-    int fd = -1;
-    if (-1 != (fd = open("/dev/null", O_RDWR))) {
-        dup2(fd, STDIN_FILENO);
-        dup2(fd, STDOUT_FILENO);
-        close(fd);
-    }
+    std::signal(SIGCHLD, SIG_IGN);
 }
 
 static void start_server(const std::string &ip, const std::string &port)
@@ -36,13 +31,14 @@ static void start_server(const std::string &ip, const std::string &port)
     builder.RegisterService(&grpc_server);
 
     std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+
+    LOG(INFO) << "Server listening on TCP " << ip << ":" << port;
+
     server->Wait();
 }
 
 int main(int argc, char *argv[])
 {
-    // daemonize(); // FIXME
-
     google::InitGoogleLogging(argv[0]);
     FLAGS_colorlogtostderr = false; // 关闭彩色日志
     google::LogToStderr();
@@ -57,6 +53,7 @@ int main(int argc, char *argv[])
 
     google::SetLogDestination(log_level, log_path.c_str());
 
+    daemonize();
     start_server(ip, port);
     return 0;
 }

@@ -33,7 +33,7 @@ public:
     void Stop() override;
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<NetInfo>> m_net_info_map;
+    std::unordered_map<std::string, std::unique_ptr<NetInfo>> m_net_info_map;
 };
 
 } // namespace monitor

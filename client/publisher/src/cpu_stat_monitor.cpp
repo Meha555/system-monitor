@@ -18,7 +18,7 @@ void CpuStatMonitor::UpdateOnce(monitor::proto::MonitorInfo *monitor_info)
         if (cpu_stat_line[0].find("cpu") == std::string::npos) {
             break;
         }
-        auto cpu_stat = std::make_shared<CpuStat>();
+        auto cpu_stat = std::make_unique<CpuStat>();
         cpu_stat->name = cpu_stat_line[0];
         cpu_stat->user = std::stof(cpu_stat_line[1]);
         cpu_stat->nice = std::stof(cpu_stat_line[2]);
@@ -33,7 +33,7 @@ void CpuStatMonitor::UpdateOnce(monitor::proto::MonitorInfo *monitor_info)
 
         auto it = m_cpu_stat_map.find(cpu_stat->name);
         if (it != m_cpu_stat_map.end()) {
-            auto old = it->second;
+            auto old = std::move(it->second);
 
             float new_cpu_total_time = cpu_stat->user + cpu_stat->system + cpu_stat->idle + cpu_stat->nice + cpu_stat->io_wait + cpu_stat->irq + cpu_stat->soft_irq + cpu_stat->steal;
             float old_cpu_total_time = old->user + old->system + old->idle + old->nice + old->io_wait + old->irq + old->soft_irq + old->steal;
@@ -60,7 +60,7 @@ void CpuStatMonitor::UpdateOnce(monitor::proto::MonitorInfo *monitor_info)
             cpu_stat_msg->set_irq_percent(cpu_irq_percent);
             cpu_stat_msg->set_soft_irq_percent(cpu_soft_irq_percent);
         }
-        m_cpu_stat_map[cpu_stat->name] = cpu_stat;
+        m_cpu_stat_map[cpu_stat->name] = std::move(cpu_stat);
     }
 }
 

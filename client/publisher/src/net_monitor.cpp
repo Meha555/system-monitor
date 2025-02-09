@@ -16,7 +16,7 @@ void NetMonitor::UpdateOnce(monitor::proto::MonitorInfo *monitor_info)
     for (const auto &net_data : net_datas) {
         std::string name = net_data[0];
         if (name.back() == ':') {
-            auto net_info = std::make_shared<NetInfo>();
+            auto net_info = std::make_unique<NetInfo>();
             name.pop_back();
             net_info->name = name;
             net_info->rcv_bytes = std::stoll(net_data[1]);
@@ -31,7 +31,7 @@ void NetMonitor::UpdateOnce(monitor::proto::MonitorInfo *monitor_info)
 
             auto iter = m_net_info_map.find(name);
             if (iter != m_net_info_map.end()) {
-                auto old = iter->second;
+                auto old = std::move(iter->second);
 
                 const auto period = Utils::SecondPassed(net_info->timepoint, old->timepoint);
                 auto net_info_msg = monitor_info->add_net_info();
@@ -41,7 +41,7 @@ void NetMonitor::UpdateOnce(monitor::proto::MonitorInfo *monitor_info)
                 net_info_msg->set_send_packets_rate((net_info->snd_packets - old->snd_packets) / period);
                 net_info_msg->set_rcv_packets_rate((net_info->rcv_packets - old->rcv_packets) / period);
             }
-            m_net_info_map[name] = net_info;
+            m_net_info_map[name] = std::move(net_info);
         }
     }
 }

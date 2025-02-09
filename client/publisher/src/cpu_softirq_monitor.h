@@ -35,7 +35,7 @@ public:
     void Stop() override;
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<SoftIrq>> m_cpu_softirqs_map;
+    std::unordered_map<std::string, std::unique_ptr<SoftIrq>> m_cpu_softirqs_map;
 };
 
 } // namespace monitor

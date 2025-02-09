@@ -33,7 +33,7 @@ public:
     void Stop() override;
 
 private:
-    std::unordered_map<std::string, std::shared_ptr<CpuStat>> m_cpu_stat_map;
+    std::unordered_map<std::string, std::unique_ptr<CpuStat>> m_cpu_stat_map;
 };
 
 } // namespace monitor

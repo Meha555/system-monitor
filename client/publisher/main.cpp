@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
     monitor::RpcClient rpc_client(ip + ":" + port);
     while (true) {
         monitor::proto::MonitorInfo monitor_info;
+        // TODO 这个name是不是可以换成UUID更好，这样保证唯一性
         monitor_info.set_name(std::string(user_name ? user_name : "unknown"));
 
         for (auto &mon : monitors) {

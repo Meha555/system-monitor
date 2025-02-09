@@ -16,7 +16,7 @@ void CpuSoftIrqMonitor::UpdateOnce(monitor::proto::MonitorInfo *monitor_info)
     }
     // 第一行是CPU信息
     for (int i = 0; i < cpu_softirqs[0].size() - 1; i++) {
-        auto info = std::make_shared<struct SoftIrq>();
+        auto info = std::make_unique<struct SoftIrq>();
         info->name = cpu_softirqs[0][i];
         info->hi = std::stoll(cpu_softirqs[1][i + 1]);
         info->timer = std::stoll(cpu_softirqs[2][i + 1]);
@@ -32,7 +32,7 @@ void CpuSoftIrqMonitor::UpdateOnce(monitor::proto::MonitorInfo *monitor_info)
         // 需要统计变化，所以需要检查之前有没有数据
         auto iter = m_cpu_softirqs_map.find(info->name);
         if (iter != m_cpu_softirqs_map.end()) {
-            auto old = (*iter).second;
+            auto old = std::move((*iter).second);
             const auto period = Utils::SecondPassed(info->timepoint, old->timepoint);
             auto softirq_msg = monitor_info->add_soft_irq();
             softirq_msg->set_cpu(info->name);
@@ -47,7 +47,7 @@ void CpuSoftIrqMonitor::UpdateOnce(monitor::proto::MonitorInfo *monitor_info)
             softirq_msg->set_hrtimer_avg((info->hrtimer - old->hrtimer) / period);
             softirq_msg->set_rcu_avg((info->rcu - old->rcu) / period);
         }
-        m_cpu_softirqs_map[info->name] = info;
+        m_cpu_softirqs_map[info->name] = std::move(info);
     }
     return;
 }

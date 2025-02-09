@@ -22,7 +22,7 @@ public:
     void Stop() override;
 
 private:
-    std::shared_ptr<CpuLoad> m_load;
+    std::unique_ptr<CpuLoad> m_load;
 };
 
 } // namespace monitor
