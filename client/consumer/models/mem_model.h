@@ -9,19 +9,14 @@
 namespace models
 {
 
-class MemModel : public MonitorModel
+class MemModel : public MonitorModelBase
 {
     Q_OBJECT
 
 public:
     explicit MemModel(QObject *parent = nullptr);
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index,
-                  int role = Qt::DisplayRole) const override;
-    QVariant headerData(int section, Qt::Orientation orientation,
-                        int role) const override;
 
     void updateMonitorInfo(const monitor::proto::MonitorInfo &monitor_info) override;
 
@@ -30,7 +25,7 @@ signals:
                      const QVector<int> &roles);
 
 private:
-    QVector<QVariant> insert(const monitor::proto::MemInfo &mem_info);
+    QVector<QVariant> collect(const monitor::proto::MemInfo &mem_info);
 
     enum MemInfoItem {
         USED_PERCENT = 0,

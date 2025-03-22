@@ -2,17 +2,27 @@
 
 #include <QColor>
 #include <QFont>
+#include <qnamespace.h>
 
 namespace models
 {
-MonitorModel::MonitorModel(QObject *parent)
+MonitorModelBase::MonitorModelBase(QObject *parent)
     : QAbstractTableModel(parent)
 {
 }
 
-QVariant MonitorModel::headerData(int section, Qt::Orientation orientation,
+int MonitorModelBase::rowCount(const QModelIndex &parent) const
+{
+    return m_monitor_data.size();
+}
+
+QVariant MonitorModelBase::headerData(int section, Qt::Orientation orientation,
                                   int role) const
 {
+    if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
+        return m_header[section];
+    }
+
     if (role == Qt::FontRole) {
         return QVariant::fromValue(QFont("Microsoft YaHei", 10, QFont::Bold));
     }
@@ -24,8 +34,13 @@ QVariant MonitorModel::headerData(int section, Qt::Orientation orientation,
     return QAbstractTableModel::headerData(section, orientation, role);
 }
 
-QVariant MonitorModel::data(const QModelIndex &index, int role) const
+QVariant MonitorModelBase::data(const QModelIndex &index, int role) const
 {
+    if (role == Qt::DisplayRole) {
+        if (index.row() < m_monitor_data.size() && index.column() < columnCount(index.parent()))
+            return m_monitor_data[index.row()][index.column()];
+    }
+
     if (role == Qt::TextAlignmentRole) {
         return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
     }

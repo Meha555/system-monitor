@@ -5,18 +5,13 @@ namespace models
 {
 
 NetModel::NetModel(QObject *parent)
-    : MonitorModel(parent)
+    : MonitorModelBase(parent)
 {
-    m_header << tr("name");
-    m_header << tr("send_rate");
-    m_header << tr("rcv_rate");
-    m_header << tr("send_packets_rate");
-    m_header << tr("rcv_packets_rate");
-}
-
-int NetModel::rowCount(const QModelIndex &parent) const
-{
-    return m_monitor_data.size();
+    m_header << tr("name")
+             << tr("send_rate")
+             << tr("rcv_rate")
+             << tr("send_packets_rate")
+             << tr("rcv_packets_rate");
 }
 
 int NetModel::columnCount(const QModelIndex &parent) const
@@ -24,31 +19,7 @@ int NetModel::columnCount(const QModelIndex &parent) const
     return COLUMN_MAX;
 }
 
-QVariant NetModel::headerData(int section, Qt::Orientation orientation,
-                              int role) const
-{
-    if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
-        return m_header[section];
-    }
-
-    return MonitorModel::headerData(section, orientation, role);
-}
-
-QVariant NetModel::data(const QModelIndex &index, int role) const
-{
-    if (index.column() < 0 || index.column() >= COLUMN_MAX) {
-        return QVariant();
-    }
-
-    if (role == Qt::DisplayRole) {
-        if (index.row() < m_monitor_data.size() && index.column() < COLUMN_MAX)
-            return m_monitor_data[index.row()][index.column()];
-    }
-    return QVariant();
-}
-
-void NetModel::updateMonitorInfo(
-    const monitor::proto::MonitorInfo &monitor_info)
+void NetModel::updateMonitorInfo(const monitor::proto::MonitorInfo &monitor_info)
 {
     beginResetModel();
     m_monitor_data.clear();
@@ -67,11 +38,10 @@ void NetModel::updateMonitorInfo(
 QVector<QVariant> NetModel::insert(const monitor::proto::NetInfo &net_info)
 {
     QVector<QVariant> net_info_list;
-    for (int i = NetModelInfo::NAME; i < COLUMN_MAX; i++) {
-        switch (i) {
+    for (int item = NetModelInfo::NAME; item < COLUMN_MAX; item++) {
+        switch (item) {
         case NetModelInfo::NAME:
-            net_info_list.push_back(
-                QString::fromStdString(net_info.name()));
+            net_info_list.push_back(QString::fromStdString(net_info.name()));
             break;
         case NetModelInfo::SEND_RATE:
             net_info_list.push_back(QVariant(net_info.send_rate()));

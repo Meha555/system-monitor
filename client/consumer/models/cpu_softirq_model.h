@@ -9,19 +9,14 @@
 namespace models
 {
 
-class CpuSoftIrqModel : public MonitorModel
+class CpuSoftIrqModel : public MonitorModelBase
 {
     Q_OBJECT
 
 public:
     explicit CpuSoftIrqModel(QObject *parent = nullptr);
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index,
-                  int role = Qt::DisplayRole) const override;
-    QVariant headerData(int section, Qt::Orientation orientation,
-                        int role) const override;
 
     void updateMonitorInfo(const monitor::proto::MonitorInfo &monito_info) override;
 
@@ -30,7 +25,7 @@ signals:
                      const QVector<int> &roles);
 
 private:
-    QVector<QVariant> insert(const monitor::proto::SoftIrq &soft_irq);
+    QVector<QVariant> collect(const monitor::proto::SoftIrq &soft_irq);
 
     enum SoftIrqInfoItem {
         CPU_NAME = 0,

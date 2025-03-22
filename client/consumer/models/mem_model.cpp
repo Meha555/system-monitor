@@ -4,33 +4,28 @@
 namespace models
 {
 MemModel::MemModel(QObject *parent)
-    : MonitorModel(parent)
+    : MonitorModelBase(parent)
 {
-    m_header << tr("used_percent");
-    m_header << tr("total");
-    m_header << tr("free");
-    m_header << tr("avail");
-    m_header << tr("buffers");
-    m_header << tr("cached");
-    m_header << tr("swap_cached");
-    m_header << tr("active");
-    m_header << tr("in_active");
-    m_header << tr("active_anon");
-    m_header << tr("inactive_anon");
-    m_header << tr("active_file");
-    m_header << tr("inactive_file");
-    m_header << tr("dirty");
-    m_header << tr("writeback");
-    m_header << tr("anon_pages");
-    m_header << tr("mapped");
-    m_header << tr("kReclaimable");
-    m_header << tr("sReclaimable");
-    m_header << tr("sUnreclaim");
-}
-
-int MemModel::rowCount(const QModelIndex &parent) const
-{
-    return m_monitor_data.size();
+    m_header << tr("used_percent")
+             << tr("total")
+             << tr("free")
+             << tr("avail")
+             << tr("buffers")
+             << tr("cached")
+             << tr("swap_cached")
+             << tr("active")
+             << tr("in_active")
+             << tr("active_anon")
+             << tr("inactive_anon")
+             << tr("active_file")
+             << tr("inactive_file")
+             << tr("dirty")
+             << tr("writeback")
+             << tr("anon_pages")
+             << tr("mapped")
+             << tr("kReclaimable")
+             << tr("sReclaimable")
+             << tr("sUnreclaim");
 }
 
 int MemModel::columnCount(const QModelIndex &parent) const
@@ -38,36 +33,12 @@ int MemModel::columnCount(const QModelIndex &parent) const
     return COLUMN_COUNT;
 }
 
-QVariant MemModel::headerData(int section, Qt::Orientation orientation,
-                              int role) const
-{
-    if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
-        return m_header[section];
-    }
-
-    return MonitorModel::headerData(section, orientation, role);
-}
-
-QVariant MemModel::data(const QModelIndex &index, int role) const
-{
-    if (index.column() < 0 || index.column() >= COLUMN_COUNT) {
-        return QVariant();
-    }
-
-    if (role == Qt::DisplayRole) {
-        if (index.row() < m_monitor_data.size() && index.column() < COLUMN_COUNT)
-            return m_monitor_data[index.row()][index.column()];
-    }
-    return QVariant();
-}
-
-void MemModel::updateMonitorInfo(
-    const monitor::proto::MonitorInfo &monitor_info)
+void MemModel::updateMonitorInfo(const monitor::proto::MonitorInfo &monitor_info)
 {
     beginResetModel();
     m_monitor_data.clear();
 
-    m_monitor_data.push_back(insert(monitor_info.mem_info()));
+    m_monitor_data.push_back(collect(monitor_info.mem_info()));
 
     // QModelIndex leftTop = createIndex(0, 0);
     // QModelIndex rightBottom = createIndex(monitor_data_.size(), COLUMN_MAX);
@@ -76,12 +47,11 @@ void MemModel::updateMonitorInfo(
     endResetModel();
 }
 
-QVector<QVariant> MemModel::insert(
-    const monitor::proto::MemInfo &mem_info)
+QVector<QVariant> MemModel::collect(const monitor::proto::MemInfo &mem_info)
 {
     QVector<QVariant> mem_info_list;
-    for (int i = MemInfoItem::USED_PERCENT; i < COLUMN_COUNT; i++) {
-        switch (i) {
+    for (int item = MemInfoItem::USED_PERCENT; item < COLUMN_COUNT; item++) {
+        switch (item) {
         case MemInfoItem::USED_PERCENT:
             mem_info_list.push_back(QVariant(mem_info.used_percent()));
             break;
